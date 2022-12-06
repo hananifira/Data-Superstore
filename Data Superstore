@@ -1,0 +1,83 @@
+
+install.packages("ggplot")
+library(ggplot2)
+library(dplyr)
+library(pwr)
+
+Data <- read.csv("C:/Users/asus/Downloads/Assessment Statistics foundation_ Dataset_superstore_simple.csv")
+
+#1 
+summary(Data)
+sd(Data$sales)
+sd(Data$quantity)
+sd(Data$profit)
+var(Data$sales)
+var(Data$quantity)
+var(Data$profit)
+
+#2
+Data$order_date <- as.Date(Data$order_date)
+Data$order_month <- as.Date(cut(Data$order_date , breaks='month'))
+Data_arrange <-Data %>% arrange (desc(order_month))
+View(Data_arrange)
+Data_2015 <- Data_arrange[5895:7996,]
+
+View(Data_2015)
+ggplot(Data_2015, aes(x=order_date, y=sales)) + 
+  stat_summary(fun.y = sum , geom='line')
+
+
+#3
+Data$order_date <- as.Date(Data$order_date)
+Data$order_month <- as.Date(cut(Data$order_date , breaks='month'))
+Data_arrange <-Data %>% arrange (desc(order_month))
+Data_2016_2015 <-Data_arrange[3310:7996,]
+
+
+Data$order_date <- as.Date(Data$order_date)
+Data$order_month <- as.Date(cut(Data$order_date , breaks='month'))
+Data_arrange <-Data %>% arrange (desc(order_month))
+Data_2016_2015 <-Data_arrange[3310:7996,]
+
+ggplot(Data_2016_2015, aes(x=sales , y=profit)) + 
+  geom_point(aes(color=category), size=4, shape=18) +
+  geom_smooth(method = 'lm', color='#405426', linetype = 'dashed' , size=1) +
+  labs(title = 'Scatter plot sales vs profit' ,
+  subtitle = 'Based on Supertstore Data',
+  caption = 'R Language Tutorial'
+  )+
+  theme(
+  plot.title = element_text(color = 'blue' , size =15, face = 'bold'),
+  plot.subtitle = element_text( size =13, face = 'italic') 
+  ) +
+  theme (
+    legend.position = c(0.8,0.2),
+    legend.title = element_text(color='blue' , size = 12, face = 'bold') ,
+    legend.text = element_text (color = 'red')
+    )
+
+
+#4 
+Data$order_date <- as.Date(Data$order_date)
+Data$order_month <- as.Date(cut(Data$order_date , breaks='month'))
+Data_arrange <-Data %>% arrange (desc(order_month))
+Data_2016_2015 <-Data_arrange[3310:7996,]
+
+sales <- Data_2016_2015[,7]
+profit <- Data_2016_2015[,9]
+scatter.smooth(x=sales, y=profit , main = 'Uji Korelasi atara Sales dan Profit')
+cor(sales, profit)
+cor(Data$sales, Data$profit)
+cor(Data_2016_2015$profit, Data_2016_2015$sales)
+cor(Data_2016_2015$sales, Data_2016_2015$profit)
+
+#5
+sales <- Data[,7]
+quantity <- Data[,8]
+profit <- Data[,9]
+modelprofit <- lm(profit ~ sales+quantity)
+print(modelprofit)
+summary(modelprofit)
+
+#6 
+prop.test(c(1530,1970), c(10000,10000))
